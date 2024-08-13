@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "text-extraction-ui.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "text-extraction-ui.py"
+    }
+  ]
+}
