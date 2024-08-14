@@ -15,10 +15,10 @@ if not api_key:
     raise ValueError("No API key found. Please set the GOOGLE_API_KEY environment variable.")
 genai.configure(api_key=api_key)
 
-def get_gemini_response(input_prompt, image_data, user_input):
+def get_gemini_response(input_prompt, file_content, user_input):
     model = genai.GenerativeModel('gemini-1.5-flash')  # Updated model name
     try:
-        response = model.generate_content([input_prompt, image_data[0], user_input])
+        response = model.generate_content([input_prompt, file_content, user_input])
         return response.text
     except Exception as e:
         return f"An error occurred: {str(e)}"
@@ -34,6 +34,7 @@ def prepare_file_for_api(uploaded_file):
             return None
     else:
         return None
+
 def prepare_image_for_api(uploaded_file):
     bytes_data = uploaded_file.getvalue()
     return [
@@ -49,15 +50,15 @@ def prepare_pdf_for_api(uploaded_file):
     for page in pdf_reader.pages:
         text_content += page.extract_text() + "\n"
     return text_content
-    
+
 # Streamlit UI setup
 st.set_page_config(page_title="Invoice Analysis with Gemini")
 st.header("Invoice Analysis Application")
 
-st.write("Upload an image of an invoice and ask questions about it.")
+st.write("This application uses Google's Gemini AI to analyze invoices. Upload an image or PDF of an invoice and ask questions about it.")
 
 user_input = st.text_input("Enter your question about the invoice:", key="input")
-uploaded_file = st.file_uploader("Upload an invoice image (jpg, jpeg, png, pdf)", type=["jpg", "jpeg", "png", "pdf"])
+uploaded_file = st.file_uploader("Upload an invoice file (jpg, jpeg, png, pdf)", type=["jpg", "jpeg", "png", "pdf"])
 
 if uploaded_file:
     if uploaded_file.type in ['image/jpeg', 'image/png']:
@@ -70,13 +71,13 @@ submit_button = st.button("Analyze Invoice")
 
 input_prompt = """
 You are an expert in understanding invoices.
-You will receive input images as invoices and
-you will have to answer questions based on the input image.
+You will receive either an image of an invoice or text extracted from a PDF invoice.
+You will have to answer questions based on the provided invoice data.
 """
 
 if submit_button:
     if not uploaded_file:
-        st.error("Please upload an image before analyzing.")
+        st.error("Please upload an invoice file before analyzing.")
     elif not user_input:
         st.error("Please enter a question about the invoice.")
     else:
