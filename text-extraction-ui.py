@@ -5,6 +5,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import PyPDF2
 import io
+import base64
 
 # Load environment variables
 load_dotenv()
@@ -36,13 +37,17 @@ def prepare_file_for_api(uploaded_file):
         return None
 
 def prepare_image_for_api(uploaded_file):
-    bytes_data = uploaded_file.getvalue()
-    return [
-        {
-            "mime_type": uploaded_file.type,
-            "data": bytes_data
+    image = Image.open(uploaded_file)
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+    byte_stream = io.BytesIO()
+    image.save(byte_stream, format="PNG")
+    encoded_image = base64.b64encode(byte_stream.getvalue()).decode('utf-8')
+    return {
+            "mime_type": "image/png",
+            "data": encoded_image
         }
-    ]
+    
 
 def prepare_pdf_for_api(uploaded_file):
     pdf_reader = PyPDF2.PdfReader(io.BytesIO(uploaded_file.getvalue()))
@@ -55,7 +60,7 @@ def prepare_pdf_for_api(uploaded_file):
 st.set_page_config(page_title="Invoice Analysis with Gemini")
 st.header("Invoice Analysis Application")
 
-st.write("This application uses Google's Gemini AI to analyze invoices. Upload an image or PDF of an invoice and ask questions about it.")
+st.write("Upload an image or PDF of an invoice and ask questions about it.")
 
 user_input = st.text_input("Enter your question about the invoice:", key="input")
 uploaded_file = st.file_uploader("Upload an invoice file (jpg, jpeg, png, pdf)", type=["jpg", "jpeg", "png", "pdf"])
