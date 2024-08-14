@@ -57,7 +57,7 @@ st.header("Invoice Analysis Application")
 st.write("Upload an image of an invoice and ask questions about it.")
 
 user_input = st.text_input("Enter your question about the invoice:", key="input")
-uploaded_file = st.file_uploader("Upload an invoice image (jpg, jpeg, png)", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Upload an invoice image (jpg, jpeg, png, pdf)", type=["jpg", "jpeg", "png", "pdf"])
 
 if uploaded_file:
     if uploaded_file.type in ['image/jpeg', 'image/png']:
