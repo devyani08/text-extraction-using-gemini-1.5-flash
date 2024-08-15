@@ -78,7 +78,7 @@ input_prompt = """
 You are an expert in understanding invoices.
 You will receive either an image of an invoice or text extracted from a PDF invoice.
 You will have to answer questions based on the provided invoice data.
-You do not have to generate response for files other than invoice.
+You do not have to generate response for files other than invoice, if there is file featuring a picture of something ohter than an invoice then return "sorry i cannot do that" in response.
 """
 
 if submit_button:
