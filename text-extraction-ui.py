@@ -78,6 +78,7 @@ input_prompt = """
 You are an expert in understanding invoices.
 You will receive either an image of an invoice or text extracted from a PDF invoice.
 You will have to answer questions based on the provided invoice data.
+You do not have to generate response for files other than invoice.
 """
 
 if submit_button:
