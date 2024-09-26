@@ -57,37 +57,37 @@ def prepare_pdf_for_api(uploaded_file):
     return text_content
 
 # Streamlit UI setup
-st.set_page_config(page_title="Invoice Analysis with Gemini")
-st.header("Invoice Analysis Application")
+st.set_page_config(page_title="Image/Text Analysis with Gemini")
+st.header("Text/Image Analysis Application")
 
-st.write("Upload an image or PDF of an invoice and ask questions about it.")
+st.write("Upload an image or PDF and ask questions about it.")
 
-user_input = st.text_input("Enter your question about the invoice:", key="input")
+user_input = st.text_input("Enter your question about the Image/PDF:", key="input")
 uploaded_file = st.file_uploader("Upload an invoice file (jpg, jpeg, png, pdf)", type=["jpg", "jpeg", "png", "pdf"])
 
 if uploaded_file:
     if uploaded_file.type in ['image/jpeg', 'image/png']:
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Invoice", use_column_width=True)
+        st.image(image, caption="Uploaded", use_column_width=True)
     elif uploaded_file.type == 'application/pdf':
         st.success("PDF uploaded successfully")
 
-submit_button = st.button("Analyze Invoice")
+submit_button = st.button("Analyze")
 
 input_prompt = """
-You are an expert in understanding invoices.
-You will receive either an image of an invoice or text extracted from a PDF invoice.
-You will have to answer questions based on the provided invoice data.
-You do not have to generate response for files other than invoice, if there is file featuring a picture of something ohter than an invoice then return "sorry i cannot do that" in response.
+You are an expert in understanding images and pdf which comtain picture and text.
+You will receive either an image or text document. 
+You will have to answer questions based on the provided data present in document.
+
 """
 
 if submit_button:
     if not uploaded_file:
-        st.error("Please upload an invoice file before analyzing.")
+        st.error("Please upload a document before analyzing.")
     elif not user_input:
-        st.error("Please enter a question about the invoice.")
+        st.error("Please enter a question about the document.")
     else:
-        with st.spinner("Analyzing the invoice..."):
+        with st.spinner("Analyzing the document....."):
             file_content = prepare_file_for_api(uploaded_file)
             response = get_gemini_response(input_prompt, file_content, user_input)
             st.subheader("Analysis Result")
